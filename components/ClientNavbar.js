@@ -32,7 +32,7 @@ export default function ClientNavbar() {
           <Link href="/">Home</Link>
           <Link href="/write">Write a Blog</Link>
           <Link href="/myblogs">My Blog</Link>
-          <Link href="/contacts">Contacts</Link>
+          <a href="#contacts">Contacts</a>
           <div className="relative w-full max-w-[200px]">
             <form
               action="/action_page.php"

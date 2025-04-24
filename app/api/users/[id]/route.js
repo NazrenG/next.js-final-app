@@ -3,7 +3,7 @@ export async function GET(request, { params }) {
   const supabase = await createClient();
   const { id } = await params;
   const { data, error } = await supabase
-    .from("users")
+    .from("auth.users")
     .select("*")
     .eq("id", id)
     .single();

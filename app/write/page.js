@@ -1,36 +1,62 @@
+"use client";
 import React from "react";
-
+import TextEditor from "@/components/TextEditor";
 const page = () => {
+  const [categories, setCategories] = React.useState([]);
+  const handleGetCategories = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/categories", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      setCategories(data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  React.useEffect(() => {
+    handleGetCategories();
+  }, []);
   return (
-    <div className="flex flex-col items-start justify-center w-full  ">
-      <p className="font-bold text-5xl mb-10">Write a new blog</p>
-      <form className="flex flex-col gap-4 w-full ">
+    <div className="flex flex-col   justify-center w-full  ">
+      <p className="font-bold text-5xl text-center mb-10">Write a new blog</p>
+      <form className="flex flex-col gap-4 w-[768px] ">
         <input
           type="text"
           placeholder="Title"
-          className="border border-gray-300 rounded-sm p-2"
+          className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-sm p-6"
         />
+
         <input
           type="text"
           placeholder="Description"
-          className="border border-gray-300 rounded-sm p-2"
+          className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-sm p-6"
         />
 
         <select
-          id="cars"
-          name="cars"
-          className="border border-gray-300 rounded-sm p-2"
+          id="category"
+          name="category"
+          className="border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-black dark:text-white rounded-sm p-6"
         >
-          <option value="volvo">Volvo</option>
-          <option value="saab">Saab</option>
-          <option value="fiat">Fiat</option>
-          <option value="audi">Audi</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
         </select>
-        <textarea
-          placeholder="Write your blog here..."
-          className="border border-gray-300 rounded-sm p-2 h-64"
-        ></textarea>
-        <button className="bg-[#FFD050] text-black rounded-sm p-2">
+
+        <div>
+          <TextEditor />
+        </div>
+        <button className="bg-[#FFD050] text-black rounded-sm p-3 text-base font-bold">
           Submit
         </button>
       </form>

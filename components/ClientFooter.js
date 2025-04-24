@@ -7,9 +7,32 @@ import { useThemeStore } from "@/store/themeChange";
 
 export default function ClientFooter() {
   const darkMode = useThemeStore((state) => state.darkMode);
+  const [categories, setCategories] = React.useState([]);
+  const handleGetCategories = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/categories", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      setCategories(data);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+  React.useEffect(() => {
+    handleGetCategories();
+  }, []);
 
   return (
-    <footer className="w-full bg-[#F6F6F7] dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-t">
+    <footer id="contacts" className="w-full bg-[#F6F6F7] dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-t">
       <div className="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
         {/* About */}
         <div className="space-y-4 w-[280px]">
@@ -52,9 +75,9 @@ export default function ClientFooter() {
                 </Link>
               </li>
               <li>
-                <Link href="/contacts" className="hover:underline">
+                <a href="#contacts" className="hover:underline">
                   Contacts
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
@@ -63,36 +86,14 @@ export default function ClientFooter() {
           <div className="text-sm w-[120px]">
             <h2 className="font-semibold text-lg mb-4">Categories</h2>
             <ul className="space-y-2 text-base">
-              <li>
-                <Link href="/" className="hover:underline">
-                  Lifestyle
-                </Link>
-              </li>
-              <li>
-                <Link href="/write" className="hover:underline">
-                  Technology
-                </Link>
-              </li>
-              <li>
-                <Link href="/myblogs" className="hover:underline">
-                  Travel
-                </Link>
-              </li>
-              <li>
-                <Link href="/contacts" className="hover:underline">
-                  Business
-                </Link>
-              </li>
-              <li>
-                <Link href="/myblogs" className="hover:underline">
-                  Economy
-                </Link>
-              </li>
-              <li>
-                <Link href="/contacts" className="hover:underline">
-                  Supports
-                </Link>
-              </li>
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <Link href={`/category/${category.id}`} className="hover:underline">
+                    {category.name}
+                  </Link>
+                </li>
+              ))}
+             
             </ul>
           </div>
         </div>

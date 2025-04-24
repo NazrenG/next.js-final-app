@@ -1,7 +1,7 @@
 import { Geist } from "next/font/google";
 import ClientNavbar from "@/components/ClientNavbar";
 import ClientFooter from "@/components/ClientFooter";
-import "./globals.css";
+import "./globals.scss";
 import React from "react";
 
 const geistSans = Geist({ subsets: ["latin"], display: "swap" });

@@ -1,14 +1,46 @@
 "use client";
-import React from "react";
-import { blogs } from "../../data";
+import React from "react"; 
 import BlogCard from "@/components/BlogCard";
 
 export default function HomePage() {
-  return (
-    <div className="flex flex-col items-center justify-center w-full  ">
-      <div className="w-full flex flex-col items-center justify-center mb-8 bg-[url('https://helpx.adobe.com/content/dam/help/en/stock/how-to/open-in-app-purchase/jcr%3Acontent/main-pars/image_1981313668/open-in-app-purchase_1408x792.jpg.img.jpg')] bg-cover bg-center h-72  p-10 relative rounded-lg shadow-md">
-        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg" />
+  const [blogs, setBlogs] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
 
+  const handleGetBlogs = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/api/blogs", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      setBlogs(data);
+    
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    
+    handleGetBlogs();
+    
+  }, []);
+
+  return (
+    <div className="flex flex-col items-center justify-center w-full">
+ 
+      <div className="w-full flex flex-col items-center justify-center mb-8 bg-[url('https://helpx.adobe.com/content/dam/help/en/stock/how-to/open-in-app-purchase/jcr%3Acontent/main-pars/image_1981313668/open-in-app-purchase_1408x792.jpg.img.jpg')] bg-cover bg-center h-72 p-10 relative rounded-lg shadow-md">
+        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg" />
         <div className="absolute inset-0 flex flex-col justify-end items-start mb-10 px-6 text-center text-white z-10">
           <div className="p-[4px] mb-2 bg-[#4B6BFB] border rounded-lg border-transparent w-[fit-content]">
             <p className="text-white text-sm font-medium">Category</p>
@@ -22,11 +54,13 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
-      <div className=" w-full   grid grid-cols-3 gap-12 ">
-        {blogs.map((blog) => (
-          <BlogCard key={blog.id} blog={blog} />
-        ))}
+ 
+      <div className="w-full grid grid-cols-3 gap-12">
+        {isLoading && <p>Loading...</p>}
+        {error && <p>Error: {error}</p>}
+        {!isLoading &&
+          !error &&
+          blogs.map((blog) => <BlogCard key={blog.id} blog={blog} />)}
       </div>
     </div>
   );
