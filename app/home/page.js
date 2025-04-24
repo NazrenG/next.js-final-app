@@ -1,5 +1,5 @@
 "use client";
-import React from "react"; 
+import React from "react";
 import BlogCard from "@/components/BlogCard";
 
 export default function HomePage() {
@@ -22,7 +22,6 @@ export default function HomePage() {
 
       const data = await res.json();
       setBlogs(data);
-    
     } catch (err) {
       setError(err.message);
     } finally {
@@ -31,30 +30,44 @@ export default function HomePage() {
   };
 
   React.useEffect(() => {
-    
     handleGetBlogs();
-    
   }, []);
 
   return (
     <div className="flex flex-col items-center justify-center w-full">
- 
-      <div className="w-full flex flex-col items-center justify-center mb-8 bg-[url('https://helpx.adobe.com/content/dam/help/en/stock/how-to/open-in-app-purchase/jcr%3Acontent/main-pars/image_1981313668/open-in-app-purchase_1408x792.jpg.img.jpg')] bg-cover bg-center h-72 p-10 relative rounded-lg shadow-md">
-        <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg" />
-        <div className="absolute inset-0 flex flex-col justify-end items-start mb-10 px-6 text-center text-white z-10">
-          <div className="p-[4px] mb-2 bg-[#4B6BFB] border rounded-lg border-transparent w-[fit-content]">
-            <p className="text-white text-sm font-medium">Category</p>
-          </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            The Impact of Technology on the Workplace
-          </h1>
-          <div className="flex items-center gap-6 text-sm md:text-base text-gray-200">
-            <span className="font-medium">Nezrin Quliyeva</span>
-            <span className="font-medium">22-09-2023</span>
+      {!isLoading && blogs[0]?.authors?.email && (
+        <div
+          className="w-full flex flex-col  mb-8   h-72 p-10 relative rounded-lg shadow-md"
+          style={{
+            backgroundImage: `url(${blogs[0].thumbnail})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          {" "}
+          <div className="absolute inset-0 bg-black bg-opacity-40 rounded-lg" />
+          <div className="absolute inset-0 flex flex-col justify-end items-start mb-10 px-6 text-center text-white z-10">
+            <div className="p-[4px] mb-2 bg-[#4B6BFB] border rounded-lg border-transparent w-[fit-content]">
+              <p className="text-white text-sm font-medium">
+                {blogs[0].categories.name}
+              </p>
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">
+              {blogs[0].title}
+            </h1>
+            <div className="flex items-center gap-6 text-sm md:text-base text-gray-200">
+              <span className="font-medium">{blogs[0].authors.email}</span>
+              <div className="font-medium">
+                {new Date(blogs[0].created_at).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
- 
+      )}
       <div className="w-full grid grid-cols-3 gap-12">
         {isLoading && <p>Loading...</p>}
         {error && <p>Error: {error}</p>}

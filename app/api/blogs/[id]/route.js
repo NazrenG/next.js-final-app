@@ -5,7 +5,7 @@ export async function GET(request, { params }) {
   const { id } = await params;
   const { data, error } = await supabase
     .from("blogs")
-    .select("*")
+    .select("*, authors(*)")
     .eq("id", id)
     .single();
   if (error) {
@@ -28,7 +28,9 @@ export async function Delete(request, { params }) {
     .select("*")
     .single();
   if (error) {
-    return new Response(JSON.stringify({ error:error.message }), { status: 500 });
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+    });
   }
   return new Response(JSON.stringify({ data }), {
     status: 200,

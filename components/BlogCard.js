@@ -1,8 +1,8 @@
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 
 const BlogCard = ({ blog }) => {
-  const router = useRouter();
   const [category, setCategory] = React.useState(null);
   const handleGetCategories = async () => {
     try {
@@ -34,9 +34,6 @@ const BlogCard = ({ blog }) => {
     <div
       key={blog.id}
       className="flex flex-col  gap-4 p-4 border rounded-xl shadow-md"
-      onClick={() => {
-        router.push(`/detail/${blog.id}`);
-      }}
     >
       <img
         src={blog.thumbnail}
@@ -53,13 +50,31 @@ const BlogCard = ({ blog }) => {
         </div>
       )}
 
-      <h2 className="text-base font-semibold">{blog.title}</h2>
+      <Link href={"/detail/" + blog.id} className="text-base font-semibold">
+        {blog.title}
+      </Link>
 
-      <div className="flex items-center gap-4 mt-4 justify-between">
-        <span className="font-medium text-base text-[#97989F]">nvg</span>
-        <span className="text-sm text-[#97989F] font-medium">
-          {new Date(blog.created_at).toDateString()}
-        </span>
+      <div className="flex items-center gap-2 ">
+        <img
+          src="https://img.favpng.com/17/1/20/user-interface-design-computer-icons-default-png-favpng-A0tt8aVzdqP30RjwFGhjNABpm.jpg"
+          alt={blog.authors.name}
+          className="w-12 h-12 rounded-full object-cover border"
+        />
+        <div className="flex flex-col justify-center">
+          <Link
+            href={"/myblogs/" + blog.authors.id}
+            className="text-sm font-semibold text-gray-500"
+          >
+            {blog.authors.email}
+          </Link>
+          <span className="text-sm font-semibold text-gray-700">
+            {new Date(blog.created_at).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </span>
+        </div>
       </div>
     </div>
   );
