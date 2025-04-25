@@ -18,8 +18,8 @@ export async function GET(request, { params }) {
   });
 }
 
-export async function Delete(request, { params }) {
-  const { id } = await params;
+export async function DELETE(request, { params }) {
+  const { id } = params;
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("blogs")
@@ -40,8 +40,8 @@ export async function Delete(request, { params }) {
 export async function PUT(request, { params }) {
   const { id } = await params;
   const supabase = await createClient();
-  const { title, description, category, body, thumbnail } = await req.json();
-  if (!title || !description || !category || !body || !thumbnail) {
+  const { title, body, author, category, thumbnail } = await request.json();
+  if (!title || !category || !body || !thumbnail) {
     return new Response(JSON.stringify({ error: "All fields are required" }), {
       status: 400,
     });
@@ -56,9 +56,10 @@ export async function PUT(request, { params }) {
     .from("blogs")
     .update({
       title,
-      description,
-      category,
       body,
+      author,
+      category,
+
       thumbnail,
     })
     .eq("id", id)

@@ -57,7 +57,8 @@ const BlogCard = ({ blog }) => {
       <div className="flex items-center gap-2 ">
         <img
           src="https://img.favpng.com/17/1/20/user-interface-design-computer-icons-default-png-favpng-A0tt8aVzdqP30RjwFGhjNABpm.jpg"
-          alt={blog.authors.name}
+
+          alt="user"
           className="w-12 h-12 rounded-full object-cover border"
         />
         <div className="flex flex-col justify-center">

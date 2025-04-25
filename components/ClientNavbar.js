@@ -1,14 +1,23 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { Sun, Moon, Search } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/utils/supabase/client";
 import Logo_black from "@/app/assets/images/logo_black.png";
 import Logo_white from "@/app/assets/images/logo_white.png";
 import { useThemeStore } from "@/store/themeChange";
 export default function ClientNavbar() {
   const darkMode = useThemeStore((state) => state.darkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
+  const [user, setUser] = useState({});
+
+  const getCurrentUser = async () => {
+    const supabase = createClient();
+    const myUser = await supabase.auth.getUser();
+    setUser(myUser.data.user);
+    console.log("Iddd" + user.id);
+  };
 
   useEffect(() => {
     if (darkMode) {
@@ -16,6 +25,7 @@ export default function ClientNavbar() {
     } else {
       document.documentElement.classList.remove("dark");
     }
+    getCurrentUser();
   }, [darkMode]);
 
   return (
@@ -31,7 +41,8 @@ export default function ClientNavbar() {
         <div className="flex gap-5 items-center mr-5 ">
           <Link href="/">Home</Link>
           <Link href="/write">Write a Blog</Link>
-          <Link href="/myblogs">My Blog</Link>
+          <Link href={`/myblogs/${user?.id}`}>My Blog</Link>
+
           <a href="#contacts">Contacts</a>
           <div className="relative w-full max-w-[200px]">
             <form
@@ -72,7 +83,12 @@ export default function ClientNavbar() {
               </div>
             </div>
           </label>
-          <button className="px-3 py-1 border rounded hover:bg-gray-200 dark:hover:bg-gray-700 bg-black text-white">
+          <button
+            onClick={() => {
+              window.open("/sign-in");
+            }}
+            className="px-3 py-1 border rounded hover:bg-gray-200 dark:hover:bg-gray-700 bg-black text-white"
+          >
             Sign In
           </button>
         </div>

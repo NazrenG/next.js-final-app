@@ -13,38 +13,18 @@ export async function GET() {
     headers: { "Content-Type": "application/json" },
   });
 }
-export async function POST(request) {
-  const supabse = await createClient();
-  const { title, description, category, body, thumbnail } =
-    await request.json();
-  if (!title || !description || !category || !body || !thumbnail) {
-    return new Response(JSON.stringify({ error: "All fields are required" }), {
-      status: 400,
-    });
-  }
-  if (title.length < 5) {
-    return new Response(
-      JSON.stringify({ error: "Title must be at least 5 characters long" }),
-      { status: 400 }
-    );
-  }
-  const { data, error } = await supabse
-    .from("blogs")
-    .insert([
-      {
-        title,
-        description,
-        category,
-        body,
-        thumbnail,
-      },
-    ])
-    .select("*")
-    .single();
-  if (error) {
-    return new Response(JSON.stringify({ error }), { status: 500 });
-  }
-  return new Response(JSON.stringify(data), {
-    headers: { "Content-Type": "application/json" },
-  });
+export async function POST(req) {
+  const supabase = await createClient();
+  const blog = await req.json();
+  const { title, thumbnail, category, body,author } = blog;
+  const { data, error } = await supabase.from("blogs").insert({title, thumbnail, category, body,author}).single();
+
+  return new Response(
+    JSON.stringify(JSON.stringify(data), {
+      message: "Blog added succesfully!",
+    }),
+    {
+      headers: { "Content-type": "application/json" },
+    }
+  );
 }
