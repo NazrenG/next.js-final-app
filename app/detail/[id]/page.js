@@ -1,6 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import React from "react";
+import Link from "next/link";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -82,9 +83,12 @@ const BlogDetail = () => {
           {blog.title}
         </h1>
         <div className="flex  gap-6 text-sm  text-black  dark:text-white">
-          <span className="font-medium  text-gray-700 dark:text-white">
+          <Link
+            href={"/myblogs/" + blog.authors.id}
+            className="font-medium  text-gray-700 dark:text-white"
+          >
             {blog.authors.email}
-          </span>
+          </Link>
           <span className="font-medium  text-gray-700 dark:text-white">
             {new Date(blog.created_at).toLocaleDateString("en-US", {
               year: "numeric",

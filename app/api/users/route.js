@@ -11,7 +11,7 @@ export async function GET(request) {
   }
 
   const { data: posts, error } = await supabase
-    .from("blogs") // ya da senin tablonun adı neyse
+    .from("blogs")  
     .select("*, authors(*)")
     .eq("author", user.id);
 

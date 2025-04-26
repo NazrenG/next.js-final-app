@@ -3,8 +3,12 @@
 import React, { useState, useEffect } from "react";
 import TextEditor from "@/components/TextEditor";
 import { createClient } from "@/utils/supabase/client";
+import { useSearchParams } from "next/navigation";
 
 const WriteBlog = () => {
+  const param = useSearchParams();
+  const id = param.get("id");
+
   const [blog, setBlog] = useState({
     title: "",
     category: "category",
@@ -16,6 +20,52 @@ const WriteBlog = () => {
 
   const [categories, setCategories] = useState([]);
   const [user, setUser] = useState({});
+
+  const handleGetBlog = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/blogs/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setBlog(data);
+      setBlogBody(data.body);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  const handleUpdateBlog = async () => {
+    try {
+      const res = await fetch(`http://localhost:3000/api/blogs/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(blog),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to update blog");
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setBlog({ title: "", category: "category", thumbnail: "", body: "" });
+      setBlogBody("");
+      alert("Blog updated successfully!");
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
 
   const getCategories = async () => {
     try {
@@ -73,6 +123,7 @@ const WriteBlog = () => {
   useEffect(() => {
     getCategories();
     getCurrentUser();
+    handleGetBlog();
   }, []);
 
   useEffect(() => {
@@ -126,11 +177,11 @@ const WriteBlog = () => {
           <TextEditor setBlogBody={setBlogBody} />
         </div>
         <button
-          onClick={addBlog}
+          onClick={id ? handleUpdateBlog : addBlog}
           type="button"
           className="bg-[#FFD050] text-black rounded-sm p-3 text-base font-bold"
         >
-          Submit
+          {id == null ? "Submit" : "Update"}
         </button>
       </form>
     </div>
