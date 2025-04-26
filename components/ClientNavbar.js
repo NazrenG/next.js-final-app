@@ -7,18 +7,26 @@ import { createClient } from "@/utils/supabase/client";
 import Logo_black from "@/app/assets/images/logo_black.png";
 import Logo_white from "@/app/assets/images/logo_white.png";
 import { useThemeStore } from "@/store/themeChange";
+import { usePaginationStore } from "@/store/paginationStore";
+
 export default function ClientNavbar() {
+  const{searchTerm, setSearchTerm,setCurrentPage} = usePaginationStore()
   const darkMode = useThemeStore((state) => state.darkMode);
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const [user, setUser] = useState({});
 
   const getCurrentUser = async () => {
     const supabase = createClient();
-    const myUser = await supabase.auth.getUser();
-    setUser(myUser.data.user);
+    const currentUser = await supabase.auth.getUser();
+    setUser(currentUser.data.user);
     console.log("Iddd" + user.id);
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  
+  }
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
@@ -53,6 +61,8 @@ export default function ClientNavbar() {
                 type="text"
                 placeholder="Search..."
                 name="search"
+                value={searchTerm}
+                onChange={handleSearch}
                 className="w-full pl-4 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2  bg-inherit text-black dark:text-white"
               />
               <Search

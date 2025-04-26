@@ -7,16 +7,31 @@ export default function HomePage() {
   const [blogs, setBlogs] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-  const { currentPage, setCurrentPage, blogsPerPage } = usePaginationStore(); 
+  const {
+    currentPage,
+    searchTerm,
+    selectedCategory,
+    setCurrentPage,
+    blogsPerPage,
+  } = usePaginationStore();
 
   const handleGetBlogs = async () => {
     try {
-      const res = await fetch("http://localhost:3000/api/blogs", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const params = new URLSearchParams();
+      if (searchTerm) params.append("search", searchTerm);
+      if (selectedCategory) params.append("category", selectedCategory);
+      params.append("page", currentPage);
+      params.append("limit", blogsPerPage);
+
+      const res = await fetch(
+        `http://localhost:3000/api/blogs?${params.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to fetch data");
@@ -24,20 +39,30 @@ export default function HomePage() {
 
       const data = await res.json();
       setBlogs(data);
+      setIsLoading(false);
     } catch (err) {
       setError(err.message);
-    } finally {
       setIsLoading(false);
     }
   };
 
   React.useEffect(() => {
     handleGetBlogs();
-  }, []);
+  }, [searchTerm, selectedCategory, currentPage]);
+
+  const filteredBlogs = blogs.filter((blog) => {
+    const matchesSearch = blog.title
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory
+      ? blog.categories.name === selectedCategory
+      : true;
+    return matchesSearch && matchesCategory;
+  });
 
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = blogs.slice(indexOfFirstBlog, indexOfLastBlog);
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
   const totalPages = Math.ceil(blogs.length / blogsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);

@@ -6,6 +6,11 @@ export const usePaginationStore = create(
     (set) => ({
       currentPage: 1,
       blogsPerPage: 6,
+      searchTerm:"",
+      selectedCategory:"",
+
+      setSearchTerm: (term) => set({ searchTerm: term }),
+      setSelectedCategory: (category) => set({ selectedCategory: category }),
       setCurrentPage: (page) => set({ currentPage: page }),
     }),
     {
